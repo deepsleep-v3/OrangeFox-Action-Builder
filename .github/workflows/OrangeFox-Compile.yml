@@ -113,6 +113,15 @@ jobs:
         sed -i 's/.*vendor\/xiaomi.*/# &/g' device/xiaomi/sm7250-common/lito.mk
         echo "===== 已强行切断 vendor 依赖 ====="
 
+    - name: Patch BoardConfigCommon for SEPolicy
+      run: |
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
+        # 强行注释掉 BoardConfigCommon.mk 里缺失的 SEPolicy 依赖
+        sed -i 's/.*sepolicy_vndr-legacy-um.*/# &/g' device/xiaomi/sm7250-common/BoardConfigCommon.mk
+        echo "===== 已强行切断 SEPolicy 依赖 ====="
+        # 顺便看一眼这行是不是被注释了
+        sed -n '173,177p' device/xiaomi/sm7250-common/BoardConfigCommon.mk
+
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
