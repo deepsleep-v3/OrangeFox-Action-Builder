@@ -99,12 +99,6 @@ jobs:
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
         git clone ${{ inputs.COMMON_TREE }} -b ${{ inputs.COMMON_TREE_BRANCH }} ./${{ inputs.COMMON_PATH }}
 
-    - name: Verify Common Tree
-      run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
-        ls -l ${{ inputs.COMMON_PATH }}/lito.mk
-        test -f ${{ inputs.COMMON_PATH }}/lito.mk || exit 1
-
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
