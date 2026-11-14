@@ -18,23 +18,11 @@ on:
       DEVICE_TREE_BRANCH:
         description: 'Device Tree Branch'
         required: true
-        default: 'android-12.1'
+        default: 'thirteen'
       DEVICE_PATH:
         description: 'Device Path'
         required: true
         default: 'device/xiaomi/vangogh'
-      COMMON_TREE:
-        description: 'Common Tree URL (sm7250-common)'
-        required: true
-        default: 'https://github.com/PixelExperience-Devices/device_xiaomi_sm7250-common'
-      COMMON_TREE_BRANCH:
-        description: 'Common Tree Branch'
-        required: true
-        default: 'thirteen'
-      COMMON_PATH:
-        description: 'Common Tree Path'
-        required: true
-        default: 'device/xiaomi/sm7250-common'
       DEVICE_NAME:
         description: 'Device Codename'
         required: true
@@ -93,34 +81,6 @@ jobs:
         git clone ${{ inputs.DEVICE_TREE }} -b ${{ inputs.DEVICE_TREE_BRANCH }} ./${{ inputs.DEVICE_PATH }}
         cd ${{ inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
-    - name: Clone Common Tree
-      run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
-        git clone ${{ inputs.COMMON_TREE }} -b ${{ inputs.COMMON_TREE_BRANCH }} ./${{ inputs.COMMON_PATH }}
-
-    - name: Patch Common Tree (Remove SDM845 bug)
-      run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
-        sed -i 's/.*sdm845.*/# &/g' ${{ inputs.COMMON_PATH }}/lito.mk
-        echo "===== 补丁已打，查看第 268 行 ====="
-        sed -n '265,270p' ${{ inputs.COMMON_PATH }}/lito.mk
-
-    - name: Patch lito.mk to skip Vendor Tree
-      run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
-        sed -i 's/.*sm7250-common-vendor.mk.*/# &/g' device/xiaomi/sm7250-common/lito.mk
-        sed -i 's/.*vendor\/xiaomi.*/# &/g' device/xiaomi/sm7250-common/lito.mk
-        echo "===== 已强行切断 vendor 依赖 ====="
-
-    - name: Patch BoardConfigCommon for SEPolicy
-      run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
-        # 强行注释掉 BoardConfigCommon.mk 里缺失的 SEPolicy 依赖
-        sed -i 's/.*sepolicy_vndr-legacy-um.*/# &/g' device/xiaomi/sm7250-common/BoardConfigCommon.mk
-        echo "===== 已强行切断 SEPolicy 依赖 ====="
-        # 顺便看一眼这行是不是被注释了
-        sed -n '173,177p' device/xiaomi/sm7250-common/BoardConfigCommon.mk
 
     - name: Building OrangeFox
       run: |
