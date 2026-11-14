@@ -99,6 +99,13 @@ jobs:
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
         git clone ${{ inputs.COMMON_TREE }} -b ${{ inputs.COMMON_TREE_BRANCH }} ./${{ inputs.COMMON_PATH }}
 
+    - name: Patch Common Tree (Remove SDM845 bug)
+      run: |
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
+        sed -i 's/.*sdm845.*/# &/g' ${{ inputs.COMMON_PATH }}/lito.mk
+        echo "===== 补丁已打，查看第 268 行 ====="
+        sed -n '265,270p' ${{ inputs.COMMON_PATH }}/lito.mk
+
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
