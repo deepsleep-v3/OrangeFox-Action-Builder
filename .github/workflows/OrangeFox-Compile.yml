@@ -106,6 +106,13 @@ jobs:
         echo "===== 补丁已打，查看第 268 行 ====="
         sed -n '265,270p' ${{ inputs.COMMON_PATH }}/lito.mk
 
+    - name: Patch lito.mk to skip Vendor Tree
+      run: |
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
+        sed -i 's/.*sm7250-common-vendor.mk.*/# &/g' device/xiaomi/sm7250-common/lito.mk
+        sed -i 's/.*vendor\/xiaomi.*/# &/g' device/xiaomi/sm7250-common/lito.mk
+        echo "===== 已强行切断 vendor 依赖 ====="
+
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.MANIFEST_BRANCH }}
